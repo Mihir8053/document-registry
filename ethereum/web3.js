@@ -8,7 +8,9 @@ if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
     web3 = new Web3(window.ethereum);
 } else {
     // we are on the server *OR* the user is not running metamask
-    const provider = new Web3.providers.HttpProvider(`https://${process.env.NEXT_PUBLIC_ETHEREUM_NETWORK}.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY}`);
+    const key = process.env.NEXT_PUBLIC_INFURA_API_KEY;
+    const network = process.env.NEXT_PUBLIC_ETHEREUM_NETWORK;
+    const provider = new Web3.providers.HttpProvider(`https://${network}.infura.io/v3/${key}`);
     web3 = new Web3(provider);
 }
 

@@ -6,7 +6,7 @@ import web3 from '../ethereum/web3';
 import { Container, Table, Button, Dimmer, Loader, Form, Input, Header, Segment } from 'semantic-ui-react';
 import Link from 'next/link';
 
-const ExportersList = () => {
+const ExportersList = ({ exporterDetails, deployerAddr }) => {
     const [exporters, setExporters] = useState([]);
     const [deployerAddress, setDeployerAddress] = useState('');
     const [editLoading, setEditLoading] = useState(false);
@@ -18,16 +18,7 @@ const ExportersList = () => {
         const fetchData = async () => {
             setLoading(true); // Set loading to true before fetching data
             try {
-                const accounts = await web3.eth.getAccounts();
-                const instance = await factory.methods.getApprovedExporters().call();
-                const deployerAddress = await factory.methods.owner().call();
-                setDeployerAddress(deployerAddress);
-                const exporterDetails = await Promise.all(
-                    instance.map(async (exporter) => ({
-                        address: exporter,
-                        info: await factory.methods.getExporterInfo(exporter).call({ from: deployerAddress }),
-                    }))
-                );
+                setDeployerAddress(deployerAddr);
                 setExporters(exporterDetails);
             } catch (error) {
                 console.log("Error fetching data:", error);
@@ -128,6 +119,24 @@ const ExportersList = () => {
             </div>
         </Layout>
     );
+};
+
+ExportersList.getInitialProps = async () => {
+    try {
+        const instance = await factory.methods.getApprovedExporters().call();
+        const deployerAddress = await factory.methods.owner().call();
+        const exporterDetails = await Promise.all(
+            instance.map(async (exporter) => ({
+                address: exporter,
+                info: await factory.methods.getExporterInfo(exporter).call({ from: deployerAddress }),
+            }))
+        );
+
+        return { exporterDetails, deployerAddr: deployerAddress };
+    } catch (error) {
+        console.log("Error fetching data:", error);
+        return { exporterDetails: [], deployerAddr: '' };
+    }
 };
 
 export default ExportersList;

@@ -1,25 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Icon } from 'semantic-ui-react';
-import { Form, Button, Message, FormField, Input } from 'semantic-ui-react';
-import { faChartLine, faUser, faUserAlt, faUserTie, faUserGraduate } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from 'react';
+import { Card, Form, Button, Message, FormField, Input } from 'semantic-ui-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserAlt, faUserGraduate, faUserTie } from '@fortawesome/free-solid-svg-icons';
 import factory from "../ethereum/factory";
 import web3 from '../ethereum/web3';
 import 'semantic-ui-css/semantic.min.css';
 import Layout from '../components/Layout';
 import { useRouter } from 'next/router';
 
-const Exporter = () => {
+const Exporter = ({ deployerAddress }) => {
     const router = useRouter();
     const [chainNumber, setChainNumber] = useState('');
     const [userBalance, setUserBalance] = useState('');
-    const [deployerAddress, setDeployerAddress] = useState('');
     const [error, setError] = useState('');
     const [loadingAddExporter, setLoadingAddExporter] = useState(false);
     const [exporterAddress, setExporterAddress] = useState('');
     const [exporterName, setExporterName] = useState('');
     const [currentUser, setCurrentUser] = useState('');
     const [action, setAction] = useState('');
+    const [message, setMessage] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,10 +27,8 @@ const Exporter = () => {
                 const chainID = await web3.eth.getChainId();
                 const chainIDString = chainID.toString();
                 const balance = await web3.eth.getBalance(accounts[0]);
-                const deployerAddress = await factory.methods.owner().call();
                 setChainNumber(chainIDString);
                 setUserBalance(web3.utils.fromWei(balance, 'ether'));
-                setDeployerAddress(deployerAddress);
                 setCurrentUser(accounts[0]);
             } catch (error) {
                 console.log("error: ", error);
@@ -65,13 +62,17 @@ const Exporter = () => {
     const onSubmit = async (event) => {
         event.preventDefault();
         setError('');
+        setMessage('Waiting for transaction confirmation');
         try {
             if (action == "add") {
+                setMessage('Waiting for block creation');
                 await factory.methods.addExporter(exporterAddress, exporterName).send({ from: deployerAddress });
+                setMessage('Exporter added successfully!');
             }
-            router.push("/exporterslist")
+            router.push("/exporterslist");
         } catch (error) {
             setError(error.message);
+            setMessage('');
         }
         setLoadingAddExporter(false);
     };
@@ -103,11 +104,22 @@ const Exporter = () => {
                     <label>Name of the exporter</label>
                     <Input value={exporterName} onChange={(event) => setExporterName(event.target.value)} />
                 </FormField>
+                {message && <Message info content={message} />}
                 <Message error header="Oops!" content={error} />
                 <Button primary loading={loadingAddExporter} onClick={handleAddExporter}>Add Exporter</Button>
             </Form>
         </Layout>
     );
+};
+
+export const getServerSideProps = async (ctx) => {
+    try {
+        const deployerAddress = await factory.methods.owner().call();
+        return { props: { deployerAddress } };
+    } catch (error) {
+        console.log("Error fetching data:", error);
+        return { props: {} };
+    }
 };
 
 export default Exporter;
