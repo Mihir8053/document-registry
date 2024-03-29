@@ -1,0 +1,42 @@
+ethereum todo 
+make the smart contract-> done from github✅
+compile it->done✅
+write the test file✅ 
+deploy it✅
+
+
+ethereum part completed✅
+now go through the codebase ✅
+
+website using next js
+3 pages + 1 home page
+about page-> routes on the navbar for the rest of the pages. landing page of the webapp✅
+admin page -> for the university ✅
+    exporter page -> display counters, exporter info, chain id, eth balance
+        counters-> getCounters() -> use countExporters variable in the smart contract
+        exporter info -> getExporterInfo() -> use getExporterInfo function in the smart contract
+        chain ID -> ethereum network chain id -> available in web3 object
+
+        form element
+        -> exporter address 
+        -> name of the exporter
+
+upload page -> document upload  -> ipfs + ethereum✅
+    ->an input element for the exporter adderess to check if approved exporter -> isExporterApproved() function in the smart contract
+    ->upload button -> select a pdf file -> upload to pinata ipfs 
+    ->get the ipfs hash and send the hash to the smart contract
+
+student page -> can see the document using the student address✅
+    ->Form element -> student will enter the address
+    ->get the list of the document using smart contract 
+    -> display in the form of a table
+    -> one column document information
+    -> second column ipfs link
+
+verify page -> upload document and verify✅
+    -> upload button
+    -> store it on ipfs and get the hash
+    -> ipfs hash=> findDocHash function from the smart contract
+
+
+better login on the admin page???
