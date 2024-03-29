@@ -3,13 +3,16 @@ import factory from "../ethereum/factory";
 import Layout from "../components/Layout";
 import 'semantic-ui-css/semantic.min.css';
 import web3 from '../ethereum/web3';
-import { Table, Button, Dimmer, Loader } from 'semantic-ui-react';
+import { Container, Table, Button, Dimmer, Loader, Form, Input, Header, Segment } from 'semantic-ui-react';
 import Link from 'next/link';
 
 const ExportersList = () => {
     const [exporters, setExporters] = useState([]);
     const [deployerAddress, setDeployerAddress] = useState('');
+    const [editLoading, setEditLoading] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [editingExporter, setEditingExporter] = useState(null);
+    const [newExporterName, setNewExporterName] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
@@ -34,6 +37,29 @@ const ExportersList = () => {
         };
         fetchData();
     }, []);
+
+    const handleEditExporter = (exporter) => {
+        setEditingExporter(exporter);
+        setNewExporterName(exporter.info);
+    };
+
+    const handleUpdateExporter = async (exporter) => {
+        setEditLoading(true);
+        try {
+            const accounts = await web3.eth.getAccounts();
+            await factory.methods.alterExporter(exporter.address, newExporterName).send({ from: deployerAddress });
+            setExporters(
+                exporters.map((e) =>
+                    e.address === exporter.address ? { ...e, info: newExporterName } : e
+                )
+            );
+            setEditingExporter(null);
+            setNewExporterName('');
+        } catch (error) {
+            console.log("Error updating exporter:", error.message);
+        }
+        setEditLoading(false);
+    };
 
     const handleDeleteExporter = async (address) => {
         setLoading(true);
@@ -62,17 +88,36 @@ const ExportersList = () => {
                         <Table.Row>
                             <Table.HeaderCell>Address</Table.HeaderCell>
                             <Table.HeaderCell>Information</Table.HeaderCell>
-                            <Table.HeaderCell>Action</Table.HeaderCell>
+                            <Table.HeaderCell>Actions</Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
-
                     <Table.Body>
                         {exporters.map((exporter) => (
                             <Table.Row key={exporter.address}>
                                 <Table.Cell>{exporter.address}</Table.Cell>
-                                <Table.Cell>{exporter.info}</Table.Cell>
                                 <Table.Cell>
-                                    <Button basic color='red' onClick={() => handleDeleteExporter(exporter.address)} loading={loading}>
+                                    {editingExporter?.address === exporter.address ? (
+                                        <Form onSubmit={() => handleUpdateExporter(exporter)}>
+                                            <Input
+                                                value={newExporterName}
+                                                onChange={(e) => setNewExporterName(e.target.value)}
+                                            />
+                                        </Form>
+                                    ) : (
+                                        exporter.info
+                                    )}
+                                </Table.Cell>
+                                <Table.Cell>
+                                    {editingExporter?.address === exporter.address ? (
+                                        <Button primary type="submit" onClick={() => handleUpdateExporter(exporter)} loading={editLoading}>
+                                            Save
+                                        </Button>
+                                    ) : (
+                                        <Button primary onClick={() => handleEditExporter(exporter)} loading={editLoading}>
+                                            Edit
+                                        </Button>
+                                    )}
+                                    <Button basic color="red" onClick={() => handleDeleteExporter(exporter.address)} loading={loading}>
                                         Delete
                                     </Button>
                                 </Table.Cell>

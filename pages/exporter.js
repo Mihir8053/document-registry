@@ -16,7 +16,6 @@ const Exporter = () => {
     const [deployerAddress, setDeployerAddress] = useState('');
     const [error, setError] = useState('');
     const [loadingAddExporter, setLoadingAddExporter] = useState(false);
-    const [loadingEditExporter, setLoadingEditExporter] = useState(false);
     const [exporterAddress, setExporterAddress] = useState('');
     const [exporterName, setExporterName] = useState('');
     const [currentUser, setCurrentUser] = useState('');
@@ -70,26 +69,16 @@ const Exporter = () => {
             if (action == "add") {
                 await factory.methods.addExporter(exporterAddress, exporterName).send({ from: deployerAddress });
             }
-            else if (action == "edit") {
-                await factory.methods.alterExporter(exporterAddress, exporterName).send({ from: deployerAddress })
-            }
             router.push("/exporterslist")
         } catch (error) {
             setError(error.message);
         }
         setLoadingAddExporter(false);
-        setLoadingEditExporter(false);
     };
 
     const handleAddExporter = async () => {
         setAction('add');
         setLoadingAddExporter(true);
-        setLoadingEditExporter(false);
-    };
-    const handleEditExporter = async () => {
-        setAction('edit');
-        setLoadingAddExporter(false);
-        setLoadingEditExporter(true);
     };
 
     return (
@@ -116,7 +105,6 @@ const Exporter = () => {
                 </FormField>
                 <Message error header="Oops!" content={error} />
                 <Button primary loading={loadingAddExporter} onClick={handleAddExporter}>Add Exporter</Button>
-                <Button primary loading={loadingEditExporter} onClick={handleEditExporter}>Edit Exporter</Button>
             </Form>
         </Layout>
     );
