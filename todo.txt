@@ -1,5 +1,5 @@
 ethereum todo 
-make the smart contract-> done from github✅
+make the smart contract✅
 compile it->done✅
 write the test file✅ 
 deploy it✅
