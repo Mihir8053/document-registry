@@ -37,6 +37,7 @@ const AuthenticationForm = () => {
         <Form onSubmit={handleSubmit} error={!!error} success={!!success}>
             <Form.Input
                 label='Admin Address'
+                placeholder="Enter the admin address"
                 value={adminAddress}
                 onChange={(e) => setAdminAddress(e.target.value)}
             />

@@ -98,11 +98,11 @@ const Exporter = ({ deployerAddress }) => {
             <Form onSubmit={onSubmit} error={!!error}>
                 <FormField>
                     <label>Exporter Address</label>
-                    <Input value={exporterAddress} onChange={(event) => setExporterAddress(event.target.value)} />
+                    <Input value={exporterAddress} onChange={(event) => setExporterAddress(event.target.value)} placeholder="Enter the exporter address" />
                 </FormField>
                 <FormField>
                     <label>Name of the exporter</label>
-                    <Input value={exporterName} onChange={(event) => setExporterName(event.target.value)} />
+                    <Input value={exporterName} onChange={(event) => setExporterName(event.target.value)} placeholder="Enter the exporter name" />
                 </FormField>
                 {message && <Message info content={message} />}
                 <Message error header="Oops!" content={error} />

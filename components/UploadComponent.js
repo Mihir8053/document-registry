@@ -133,11 +133,11 @@ const UploadComponent = ({ exporterAddress, exporterInfo }) => {
             <Form onSubmit={onSubmit}>
                 <Form.Field>
                     <label>Student Address</label>
-                    <input type="text" value={studentAddress} onChange={(e) => setStudentAddress(e.target.value)} />
+                    <input type="text" value={studentAddress} onChange={(e) => setStudentAddress(e.target.value)} placeholder="Enter the student address" />
                 </Form.Field>
                 <Form.Field>
                     <label>Student Name</label>
-                    <input type="text" value={studentName} onChange={(e) => setStudentName(e.target.value)} />
+                    <input type="text" value={studentName} onChange={(e) => setStudentName(e.target.value)} placeholder="Enter the student name" />
                 </Form.Field>
                 <Form.Field>
                     <label>Document Information</label>
