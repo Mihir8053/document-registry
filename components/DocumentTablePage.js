@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 const DocumentTablePage = ({ exporterAddress }) => {
     const [documents, setDocuments] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loadingStates, setLoadingStates] = useState({});
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -40,7 +40,8 @@ const DocumentTablePage = ({ exporterAddress }) => {
     };
 
     const handleDeleteHash = async (ipfsHash, studentAddress) => {
-        setLoading(true);
+        setLoadingStates({ ...loadingStates, [ipfsHash]: true }); // Set loading state for the specific document
+
         try {
             // Call the deleteHash function from the smart contract
             await factory.methods.deleteHash(ipfsHash, studentAddress).send({ from: exporterAddress });
@@ -53,7 +54,8 @@ const DocumentTablePage = ({ exporterAddress }) => {
         } catch (error) {
             console.error('Error deleting hash:', error);
         }
-        setLoading(false);
+
+        setLoadingStates({ ...loadingStates, [ipfsHash]: false }); // Reset loading state for the specific document
     };
 
     return (
@@ -79,9 +81,15 @@ const DocumentTablePage = ({ exporterAddress }) => {
                                 </a>
                             </Table.Cell>
                             <Table.Cell>
-                                <Button loading={loading} basic negative onClick={() => handleDeleteHash(doc.ipfsHash, doc.studentAddress)}>
-                                    Delete
-                                </Button>
+                                {loadingStates[doc.ipfsHash] ? (
+                                    <Button basic negative loading>
+                                        Delete
+                                    </Button>
+                                ) : (
+                                    <Button basic negative onClick={() => handleDeleteHash(doc.ipfsHash, doc.studentAddress)}>
+                                        Delete
+                                    </Button>
+                                )}
                             </Table.Cell>
                         </Table.Row>
                     ))}
