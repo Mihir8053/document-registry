@@ -3,6 +3,7 @@ import { Form, Button, Message } from 'semantic-ui-react'
 import { authenticate } from './ContractUtils'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { setCookie } from 'nookies';
 
 const AuthenticationForm = () => {
     const router = useRouter();
@@ -22,6 +23,10 @@ const AuthenticationForm = () => {
         try {
             const isAuthenticated = await authenticate(adminAddress)
             if (isAuthenticated) {
+                setCookie(null, 'adminAddress', adminAddress, {
+                    maxAge: 30 * 24 * 60 * 60, // 30 days
+                    path: '/',
+                });
                 setSuccess('Authentication successful!')
                 router.push('/exporter')
             } else {

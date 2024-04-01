@@ -5,6 +5,8 @@ import 'semantic-ui-css/semantic.min.css';
 import web3 from '../ethereum/web3';
 import { Container, Table, Button, Dimmer, Loader, Form, Input, Header, Segment } from 'semantic-ui-react';
 import Link from 'next/link';
+import { parseCookies } from 'nookies';
+import { authenticate } from '../components/ContractUtils';
 
 const ExportersList = ({ exporterDetails, deployerAddr }) => {
     const [exporters, setExporters] = useState([]);
@@ -121,8 +123,22 @@ const ExportersList = ({ exporterDetails, deployerAddr }) => {
     );
 };
 
-ExportersList.getInitialProps = async () => {
+export const getServerSideProps = async ({ req }) => {
     try {
+        const cookies = parseCookies({ req });
+        const adminAddress = cookies.adminAddress;
+
+        const isAuthenticated = await authenticate(adminAddress);
+
+        if (!isAuthenticated) {
+            return {
+                redirect: {
+                    destination: '/admin',
+                    permanent: false,
+                },
+            };
+        }
+
         const instance = await factory.methods.getApprovedExporters().call();
         const deployerAddress = await factory.methods.owner().call();
         const exporterDetails = await Promise.all(
@@ -132,10 +148,10 @@ ExportersList.getInitialProps = async () => {
             }))
         );
 
-        return { exporterDetails, deployerAddr: deployerAddress };
+        return { props: { exporterDetails, deployerAddr: deployerAddress } };
     } catch (error) {
         console.log("Error fetching data:", error);
-        return { exporterDetails: [], deployerAddr: '' };
+        return { props: { exporterDetails: [], deployerAddr: '' } };
     }
 };
 

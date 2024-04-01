@@ -7,6 +7,8 @@ import web3 from '../ethereum/web3';
 import 'semantic-ui-css/semantic.min.css';
 import Layout from '../components/Layout';
 import { useRouter } from 'next/router';
+import { authenticate } from '../components/ContractUtils';
+import { parseCookies } from 'nookies';
 
 const Exporter = ({ deployerAddress }) => {
     const router = useRouter();
@@ -112,7 +114,19 @@ const Exporter = ({ deployerAddress }) => {
     );
 };
 
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps = async ({ req }) => {
+    const cookies = parseCookies({ req });
+    const adminAddress = cookies.adminAddress;
+
+    const isAuthenticated = await authenticate(adminAddress);
+    if (!isAuthenticated) {
+        return {
+            redirect: {
+                destination: '/admin',
+                permanent: false,
+            },
+        };
+    }
     try {
         const deployerAddress = await factory.methods.owner().call();
         return { props: { deployerAddress } };
