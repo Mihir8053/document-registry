@@ -83,9 +83,4 @@ The Document Registry project aims to reduce the forgery of academic documents b
 
 Developers
 
-- [Developer 1's LinkedIn Profile](https://www.linkedin.com/developer1)
-- [Developer 1's Email Address](mailto:developer1@example.com)
-
-## Acknowledgments
-
-- Special thanks to [Name] for their contributions to the project.
+- [Mihir's LinkedIn Profile](https://www.linkedin.com/in/mihir-shah-322931231/)
