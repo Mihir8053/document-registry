@@ -40,7 +40,7 @@ The Document Registry project aims to reduce the forgery of academic documents b
 - Exporter Workflow
   ![Exporter workflow diagram](images/exporterWorkflow.png)
 - Verifier Workflow
-  ![Verifier workflow diagram](images/verifierWorkflow.png)
+  ![Verifier workflow diagram](images/verfierWorkflow.png)
 
 ## Routes
 
