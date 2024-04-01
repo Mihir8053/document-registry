@@ -40,3 +40,6 @@ verify page -> upload document and verify✅
 
 
 better login on the admin page???
+
+Future improvements:
+separate login pages for the student, exporter, admin and verifier
