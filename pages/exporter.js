@@ -25,30 +25,47 @@ const Exporter = ({ deployerAddress }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const accounts = await web3.eth.getAccounts();
-                const chainID = await web3.eth.getChainId();
-                const chainIDString = chainID.toString();
-                const balance = await web3.eth.getBalance(accounts[0]);
+                let accounts, chainID, chainIDString, balance;
+
+                // Check if MetaMask is available
+                if (typeof window !== "undefined" && typeof window.ethereum !== 'undefined') {
+                    // Use MetaMask to get accounts, chainID, and balance
+                    accounts = await web3.eth.getAccounts();
+                    chainID = await web3.eth.getChainId();
+                    chainIDString = chainID.toString();
+                    balance = await web3.eth.getBalance(accounts[0]);
+                } else {
+                    // Use Infura node to get chainID and balance
+                    chainID = await web3.eth.getChainId();
+                    chainIDString = chainID.toString();
+                    balance = await web3.eth.getBalance(web3.utils.toChecksumAddress(deployerAddress));
+                }
+
                 setChainNumber(chainIDString);
                 setUserBalance(web3.utils.fromWei(balance, 'ether'));
-                setCurrentUser(accounts[0]);
+
+                // Set currentUser based on availability of MetaMask
+                if (typeof window !== "undefined" && typeof window.ethereum !== 'undefined') {
+                    setCurrentUser(accounts[0]);
+                } else {
+                    setCurrentUser(web3.utils.toChecksumAddress(deployerAddress));
+                }
             } catch (error) {
                 console.log("error: ", error);
             }
         };
 
-        // Check if we're running in a browser environment
-        if (typeof window !== "undefined") {
-            fetchData();
+        fetchData();
+
+        // Check if MetaMask is available and subscribe to account change events
+        if (typeof window !== "undefined" && typeof window.ethereum !== 'undefined') {
+            window.ethereum.on('accountsChanged', handleAccountsChanged);
+
+            // Cleanup function to unsubscribe from account change events
+            return () => {
+                window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+            };
         }
-
-        // Subscribe to MetaMask account change events
-        window.ethereum.on('accountsChanged', handleAccountsChanged);
-
-        // Cleanup function to unsubscribe from account change events
-        return () => {
-            window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        };
     }, []);
 
     const handleAccountsChanged = async (accounts) => {
