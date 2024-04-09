@@ -1,4 +1,4 @@
-# Blockchain-Based Document Verification System
+# Document Verification System Project
 
 ## Introduction
 
