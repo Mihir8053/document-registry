@@ -1,4 +1,4 @@
-# Ethereum-Based Document Verification
+# Blockchain-Based Document Verification System
 
 ## Introduction
 
