@@ -6,7 +6,6 @@ deploy it✅
 
 
 ethereum part completed✅
-now go through the codebase ✅
 
 website using next js
 3 pages + 1 home page
