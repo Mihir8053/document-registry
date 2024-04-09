@@ -1,4 +1,4 @@
-# Document Verification System Project
+# CryptoStamp: Immutable Document Registry
 
 ## Introduction
 
