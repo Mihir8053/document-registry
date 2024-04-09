@@ -38,7 +38,8 @@ verify page -> upload document and verify✅
     -> ipfs hash=> findDocHash function from the smart contract
 
 
-better login on the admin page???
+better login on the admin page✅
+    done using cookie based server side authentication
 
 Future improvements:
 separate login pages for the student, exporter, admin and verifier
